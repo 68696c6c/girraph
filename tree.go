@@ -14,6 +14,14 @@ type Tree[T any] interface {
 	GetMeta() T
 }
 
+func MakeTree[T any]() Tree[T] {
+	return &TreeNode[T]{
+		ID:       uuid.New().String(),
+		Children: []Tree[T]{},
+		parent:   nil,
+	}
+}
+
 type TreeNode[T any] struct {
 	ID       string
 	Meta     T
@@ -21,11 +29,10 @@ type TreeNode[T any] struct {
 	parent   Tree[T]
 }
 
-func MakeTree[T any]() Tree[T] {
+func MakeTreeNode[T any]() *TreeNode[T] {
 	return &TreeNode[T]{
 		ID:       uuid.New().String(),
 		Children: []Tree[T]{},
-		parent:   nil,
 	}
 }
 

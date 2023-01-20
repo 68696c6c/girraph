@@ -3,4 +3,4 @@ deps:
 	go mod vendor
 
 test: deps
-	go test ./...
+	go test ./... -cover

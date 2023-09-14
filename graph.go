@@ -39,6 +39,9 @@ func (g *graph[T]) GetID() string {
 }
 
 func (g *graph[T]) SetChildren(children []Graph[T]) Graph[T] {
+	for _, child := range children {
+		child.AddParent(g)
+	}
 	g.Children = children
 	return g
 }
@@ -48,6 +51,7 @@ func (g *graph[T]) GetChildren() []Graph[T] {
 }
 
 func (g *graph[T]) AddChild(child Graph[T]) Graph[T] {
+	child.AddParent(g)
 	g.Children = append(g.Children, child)
 	return g
 }

@@ -54,6 +54,50 @@ func TestGraph_JSON(t *testing.T) {
 	assert.Equal(t, expected, result)
 }
 
+func TestGraph_SetChildren_AddsParents(t *testing.T) {
+	nodeA := MakeGraph[CustomGraph]().SetID("A").SetMeta(&customGraph{})
+	nodeA.GetMeta().SetName("node A")
+
+	nodeB := MakeGraph[CustomGraph]().SetID("B").SetMeta(&customGraph{})
+	nodeB.GetMeta().SetName("node B")
+
+	nodeC := MakeGraph[CustomGraph]().SetID("C").SetMeta(&customGraph{})
+	nodeC.GetMeta().SetName("node C")
+
+	nodeD := MakeGraph[CustomGraph]().SetID("D").SetMeta(&customGraph{})
+	nodeD.GetMeta().SetName("node D")
+
+	nodeA.SetChildren([]Graph[CustomGraph]{
+		nodeB.SetChildren([]Graph[CustomGraph]{
+			nodeD,
+		}),
+		nodeC.SetChildren([]Graph[CustomGraph]{
+			nodeD,
+		}),
+	})
+
+	assert.Len(t, nodeD.GetParents(), 2)
+	assert.Len(t, nodeB.GetParents(), 1)
+	assert.Len(t, nodeC.GetParents(), 1)
+}
+
+func TestGraph_AddChild_AddsParent(t *testing.T) {
+	nodeA := MakeGraph[CustomGraph]().SetID("A").SetMeta(&customGraph{})
+	nodeA.GetMeta().SetName("node A")
+
+	nodeB := MakeGraph[CustomGraph]().SetID("B").SetMeta(&customGraph{})
+	nodeB.GetMeta().SetName("node B")
+
+	nodeC := MakeGraph[CustomGraph]().SetID("C").SetMeta(&customGraph{})
+	nodeC.GetMeta().SetName("node C")
+
+	nodeB.AddChild(nodeC)
+	assert.Len(t, nodeC.GetParents(), 1)
+
+	nodeA.AddChild(nodeC)
+	assert.Len(t, nodeC.GetParents(), 2)
+}
+
 func getGraphFixture() Graph[CustomGraph] {
 	nodeA := MakeGraph[CustomGraph]().SetID("A").SetMeta(&customGraph{})
 	nodeA.GetMeta().SetName("node A")
